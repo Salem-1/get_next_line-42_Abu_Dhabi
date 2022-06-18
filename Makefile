@@ -1,6 +1,6 @@
 NAME	=	get_next_line.a
 SRC	=	get_next_line.c get_next_line_utils.c
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=50 -g3
+CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=20 -g3
 CC = gcc 
 OBJ	=	$(SRC:.c=.o)
 
