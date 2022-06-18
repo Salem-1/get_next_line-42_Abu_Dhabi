@@ -5,7 +5,7 @@
 
 int fd;
 char *result;
-void test_len_line(int cases, int fd);
+//void test_len_line(int cases, int fd);
 
 int main()
 {
@@ -15,22 +15,40 @@ int main()
 		printf("bad file");
 		return (0);
 	}
-
-	test_len_line(100, fd);
-	//printf("EOF = %d\n", EOF);
-	//printf("BUFFER_SIZE = %d\n", BUFFER_SIZE);
 	
+	//result = get_next_line(fd);
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	printf("%s",get_next_line(fd));
+	
+
+	//free(result);
+	
+	close(fd);
+	//printf("\nClosing the porgram....\n");
 	return (0);
 }
 
-void test_len_line(int cases, int fd)
-{
+// void test_len_line(int cases, int fd)
+// {
 	
-	for(int i = 0; i < cases; i++)
-	{
+// 	for(int i = 0; i < cases; i++)
+// 	{
 
-		result = get_next_line(fd);
-		//printf("%s", result);
-		free(result);
-	}
-}
+// 		result = get_next_line(fd);
+// 		//printf("%s", result);
+// 		free(result);
+// 	}
+// }
