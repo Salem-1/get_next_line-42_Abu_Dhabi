@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/19 07:14:32 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/19 07:30:07 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,17 @@
 //if !(\n || \0) call the read and do your job 
 char *get_next_line(int fd)
 {
-	char *result;
-	char *tmp;
+	char		*result;
+	char		*tmp;
+	static char	*remaining;
 	
-	tmp = NULL;
 	result = malloc(BUFFER_SIZE);
 	if (!result)
 		return(NULL);
-	read(fd, result, BUFFER_SIZE);
-	if (result[0] == -1 || !*result)
-		return (check_err(result, "there is nothing else to read\n"));
-	tmp = filler(fd, result, tmp);
+	//read(fd, result, BUFFER_SIZE);
+	//if (result[0] == -1 || !*result)
+		//return (check_err(result, "there is nothing else to read\n"));
+	tmp = filler(fd, result, remaining);
 	return (tmp);
 }
 
