@@ -3,12 +3,13 @@
 #include <sys/types.h>
 #include "../get_next_line.h"
 
-int fd;
-char *result;
+
 //void test_len_line(int cases, int fd);
 
 int main()
 {
+	int fd;
+	char *result;
 	fd = open("readme.txt", O_RDONLY);
 	if (fd == -1)
 	{
@@ -17,8 +18,9 @@ int main()
 	}
 	
 	//result = get_next_line(fd);
-	printf("%s",get_next_line(fd));
-
+	for(int i = 0; i < 2; ++i )
+		printf("<<<<%s>>>",get_next_line(fd));
+	
 	//free(result);
 	
 	close(fd);
