@@ -19,7 +19,7 @@ int main()
 	
 	//result = get_next_line(fd);
 	for(int i = 0; i < 2; ++i )
-		printf("<<<<%s>>>",get_next_line(fd));
+		printf("\n<<<<%s>>>>\n\n",get_next_line(fd));
 	
 	//free(result);
 	

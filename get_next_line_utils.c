@@ -6,67 +6,92 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/19 08:14:31 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/19 20:18:59 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+char * fill_remaining(char * tmp, char *remaining, int counter, int i);
 void clean_tmp(char *tmp, int i);
-int check_nl_or_null(char *tmp, int counter);
-char *ft_strjoin(char *tmp,char *result,int counter);
+char *ft_strjoin(char *tmp,char *result,int counter, int   i);
+int check_nl_or_null(char *tmp, int counter,char *remaining);
 
-/*handling the case of EOF appears as first char*/
-char *check_err(char *result, char *error_message)
-{
-	free(result);
-	return (error_message);
-}
 
-char  *filler(int fd, char *result, char *remaining)
+
+char  *filler(int fd, char *result)
 {
 	int		counter;
 	char	*tmp;
-
-	counter = BUFFER_SIZE;
+	static char *remaining;
 	
+	printf("starting the filler , remaining is %s", remaining);
+	counter = BUFFER_SIZE;
+	tmp = NULL;
 	//while(++i < BUFFER_SIZE)
 	//	tmp[i] = result[i];
-	printf("1\n");
-	if(check_nl_or_null(remaining, counter) > 0)
+	printf("filler\n");
+	if(check_nl_or_null(remaining, counter, tmp) > 0)
 	{
-		printf("2\n");
-		tmp = ft_strjoin(remaining, "", BUFFER_SIZE);
+		printf("remaining is already full\n");
+		tmp = ft_strjoin(remaining, "", BUFFER_SIZE, -1);
+		//printf("##################before ending FILLER, tmp is <%s>\n", tmp);
 		clean_tmp(tmp,0);
 		return (tmp);
 	}
-	printf("3\n");
+	
+	printf("remaining is empty, starting from beginging\n");
 	read(fd, result, BUFFER_SIZE);
-	tmp = ft_strjoin(result, "", counter + 1);
-	while (!check_nl_or_null(tmp, counter))
+	tmp = ft_strjoin(result, "", counter + 1, -1);
+	
+	while (!check_nl_or_null(tmp, counter, remaining))
 	{
-		printf("4\n");
+		printf("filling the tmp loop remaning is empty\n");
 		counter += BUFFER_SIZE;
 		read(fd, result, BUFFER_SIZE);
-		tmp = ft_strjoin(tmp, result, counter); //counter is the new malloc
+		tmp = ft_strjoin(tmp, result, counter, -1); //counter is the new malloc
 	}
-	// if(check_nl_or_null(tmp, counter) == -1) //protecting the program for NULL malloc result
-	// 	return (NULL);
-	printf("5\n");
-	tmp[counter] = '\0';
+
+	printf("nulling tmp and return it back to get_next_line(fd)\n");
+	//tmp[counter] = '\0';
+	remaining = fill_remaining(tmp, remaining, counter, check_nl_or_null(tmp, counter, remaining));
+	printf("##################before ending FILLER, remaining is <%s>\n", remaining);
+
 	clean_tmp(tmp, 0);
+
 	return (tmp);
+}
+
+char * fill_remaining(char * tmp, char *remaining, int counter, int i)
+{
+	int	j;
+
+	j = -1;
+	remaining = malloc(BUFFER_SIZE);
+	if (!remaining)
+		i = counter;
+	//check for the NULL later
+	//printf("counter = (%d) , i = (%d), remainging should be --------------------------------><%s>\n" ,counter,i, &tmp[i]);
+	while (++i < counter)
+	{
+		j++;
+		remaining[j] = tmp[i]; 	
+	}
+	printf("remainging buff ---------------------><%s>\n" ,remaining);
+	return (remaining);
 }
 
 /*clean the extra memory in tmp after the /n or \0*/
 void clean_tmp(char *tmp, int i)
 {
-	printf("6\n");
+	printf("inside clean tmp\n");
+	//printf("tmp is <%s>", tmp);
 	while(tmp[i])
 	{
+		printf("inside the cleaner tmp[%d] = %c", i, tmp[i]);
 		if (tmp[i] == '\n')
 			{
-				printf("7\n");
+				printf("found new line, putting null after it\n");
 				tmp[i+ 1] = '\0';
 				break;
 			}
@@ -74,19 +99,16 @@ void clean_tmp(char *tmp, int i)
 	}
 }
 
-int check_nl_or_null(char *tmp, int counter)
+int check_nl_or_null(char *tmp, int counter,char *remaining)
 {
-	static char	*remaining;
+	
 	int					i;
-	int					j;
-	printf("8\n");
-	if (tmp == NULL)
-		return (0);
-	remaining = malloc(BUFFER_SIZE);
-	if (!remaining)
-		return (-1); //this is an error as this is an int fun,if not ok, else return-ve num and return null somewhere in your program
 	i = -1;
-	j = -1;
+	printf("checking null or new line\n");
+	if (remaining == NULL && tmp == NULL)
+		return (0);
+	
+
 	//printf("tmp = %s\n", tmp);
 	while (++i < counter)
 	{
@@ -94,15 +116,6 @@ int check_nl_or_null(char *tmp, int counter)
 			return(i);
 		else if (tmp[i] == '\n')
 		{
-			//printf("counter = (%d) , i = (%d), remainging should be --------------------------------><%s>\n" ,counter,i, &tmp[i]);
-			while (++i < counter)
-			{
-				j++;
-				remaining[j] = tmp[i]; //saving the rest of the string in static arr to use next time
-			//	printf("%c", remaining[j]);
-			}
-			printf("9\n");
-			//printf("remainging buff --------------------------------><%s>\n" ,remaining);
 			return(i);
 		}
 	}
@@ -110,31 +123,27 @@ int check_nl_or_null(char *tmp, int counter)
 }
 
 /*Takes input as 2 strings and length, output sum of the 2 strings*/
-char *ft_strjoin(char *tmp,char *result,int counter)
+char *ft_strjoin(char *tmp,char *result,int counter, int i)
 {
+	printf("inside strjoin\n");
 	char	*new;
-	int		i;
 	int		j;
-	printf("10\n");
+	
 	j = -1;
-	//printf("inside strjoin counter is %d\n", counter);
-	i = -1;
 	new = malloc(counter);
 	if(!new)
 		return (NULL);
-	
-	while (++i < counter - BUFFER_SIZE)  //copying the tmp arr to the new array
-		new[i] = tmp[i];
+	while (++i < BUFFER_SIZE ) 
+	{
+		new[i] = tmp[counter - BUFFER_SIZE   + i];
+		printf("\ni = %d ,%c", counter - BUFFER_SIZE  + i,tmp[counter - BUFFER_SIZE  + i]);
+	}
 	i--;
-	//printf("new = %s\n", new);
-	//special condition for the first iteraation this function will work as strncpy 
 	if (counter != BUFFER_SIZE)
 	{
-		printf("11\n");
-	while (++i < counter + BUFFER_SIZE)  
-		new[i] = result[++j];
+		printf("inside strjoing reaminign is empty\n");
+		while (++i < counter + BUFFER_SIZE)  
+			new[i] = result[++j];
 	}
-	//free(tmp);
-	//printf("new = %s\n", new);
 	return (new);
 }
