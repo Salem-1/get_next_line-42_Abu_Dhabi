@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/19 19:15:22 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/21 07:46:48 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,24 @@ char *get_next_line(int fd)
 {
 	char		*result;
 	char		*tmp;
-	
-	
+	int			counter;
+
+	counter = 0;
+	tmp =  NULL;
+	result = NULL;
 	result = malloc(BUFFER_SIZE);
 	if (!result)
 		return(NULL);
 	//read(fd, result, BUFFER_SIZE);
 	//if (result[0] == -1 || !*result)
 		//return (check_err(result, "there is nothing else to read\n"));
-	tmp = filler(fd, result);
+	tmp = filler(fd, result, tmp);
 	
 	printf("\nbefore ending the program, tmp is <%s>", tmp);
 	return (tmp);
 }
 
+//fill the remaining memory with 0 ir \0 :)
 // char *memory_cleaner(char *tmp, static char *remaining)
 // {
 // 	//takes tmp, measure the len till \n or \0, clean the remainig at the null termination or the end of it 
