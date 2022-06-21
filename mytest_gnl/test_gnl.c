@@ -18,7 +18,7 @@ int main()
 	}
 	
 	//result = get_next_line(fd);
-	for(int i = 0; i < 2; ++i )
+	for(int i = 0; i < 1; ++i )
 		printf("\n<<<<%s>>>>\n\n",get_next_line(fd));
 	
 	//free(result);

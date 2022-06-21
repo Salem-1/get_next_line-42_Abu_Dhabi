@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/19 20:18:59 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/21 06:13:45 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@ void clean_tmp(char *tmp, int i);
 char *ft_strjoin(char *tmp,char *result,int counter, int   i);
 int check_nl_or_null(char *tmp, int counter,char *remaining);
 
-
-
+//reprocess the filler if it's still full
+//mdify the fill remainging part for the remaning of remaining, how about swap function to swap the tmp and remaining
+//of remaining, why not ??!!
 char  *filler(int fd, char *result)
 {
 	int		counter;
@@ -34,8 +35,9 @@ char  *filler(int fd, char *result)
 	if(check_nl_or_null(remaining, counter, tmp) > 0)
 	{
 		printf("remaining is already full\n");
-		tmp = ft_strjoin(remaining, "", BUFFER_SIZE, -1);
+		tmp = ft_strjoin(remaining, "", BUFFER_SIZE + 1, -1);
 		//printf("##################before ending FILLER, tmp is <%s>\n", tmp);
+		remaining = fill_remaining(tmp, remaining, counter, check_nl_or_null(tmp, counter, remaining));
 		clean_tmp(tmp,0);
 		return (tmp);
 	}
@@ -43,12 +45,15 @@ char  *filler(int fd, char *result)
 	printf("remaining is empty, starting from beginging\n");
 	read(fd, result, BUFFER_SIZE);
 	tmp = ft_strjoin(result, "", counter + 1, -1);
-	
-	while (!check_nl_or_null(tmp, counter, remaining))
+	int iter = 0;
+	//I believe you can use recursion instead of the code below
+	//Keep filling untill you reach null then retrun
+	while (!check_nl_or_null(tmp, counter  , remaining)) //I belive the bug in counter
 	{
-		printf("filling the tmp loop remaning is empty\n");
+		
 		counter += BUFFER_SIZE;
 		read(fd, result, BUFFER_SIZE);
+		printf("filling the tmp loop remaning is empty, the %dth iteration@@@@@result = %s\n", ++iter, result);
 		tmp = ft_strjoin(tmp, result, counter, -1); //counter is the new malloc
 	}
 
@@ -109,9 +114,10 @@ int check_nl_or_null(char *tmp, int counter,char *remaining)
 		return (0);
 	
 
-	//printf("tmp = %s\n", tmp);
+	printf("tmp = %s | insidde check_null&\n", tmp);
 	while (++i < counter)
 	{
+		printf("tmp[%d] = %c\n", i, tmp[i]);
 		if (tmp[i] == '\0')
 			return(i);
 		else if (tmp[i] == '\n')
@@ -129,17 +135,18 @@ char *ft_strjoin(char *tmp,char *result,int counter, int i)
 	char	*new;
 	int		j;
 	
+	i = -1;
 	j = -1;
 	new = malloc(counter);
 	if(!new)
 		return (NULL);
 	while (++i < BUFFER_SIZE ) 
 	{
-		new[i] = tmp[counter - BUFFER_SIZE   + i];
-		printf("\ni = %d ,%c", counter - BUFFER_SIZE  + i,tmp[counter - BUFFER_SIZE  + i]);
+		new[i] = tmp[counter - BUFFER_SIZE  - 1 + i];
+		//printf("\ni = %d,  clacl = %d ,%c",i,  counter - BUFFER_SIZE - 1  + i,tmp[counter - BUFFER_SIZE  - 1 + i]);
 	}
 	i--;
-	if (counter != BUFFER_SIZE)
+	if (counter - 1 != BUFFER_SIZE)
 	{
 		printf("inside strjoing reaminign is empty\n");
 		while (++i < counter + BUFFER_SIZE)  
