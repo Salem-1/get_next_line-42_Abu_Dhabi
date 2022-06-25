@@ -6,11 +6,16 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/21 07:46:48 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/22 06:02:37 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+//change the program to save the remainging on top of the tmp as follows
+//tmp + \0 + remainignig
+//this is a static variable to be returned
+//all other operations do on temporary strings and free them before the return statement
+
 
 
 //start your program with the remaining str instead of tmp, check it, 

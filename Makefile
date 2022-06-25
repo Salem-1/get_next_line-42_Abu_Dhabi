@@ -1,6 +1,6 @@
 NAME	=	get_next_line.a
 SRC	=	get_next_line.c get_next_line_utils.c
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=10 -g3
+CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=5 -g3
 CC = gcc 
 OBJ	=	$(SRC:.c=.o)
 
@@ -15,7 +15,7 @@ clean:
 fclean: clean
 	@rm -f $(NAME)
 
-re: fclean all
+re: fclean allq
 
 test:
 	@gcc  mytest_gnl/test_gnl.c get_next_line.a -g3
