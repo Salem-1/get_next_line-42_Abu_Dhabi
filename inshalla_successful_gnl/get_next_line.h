@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:12:54 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/27 08:33:13 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/27 17:56:04 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,3 +27,4 @@ int check_null_or_nl(char *tmp, int counter);
 char *filler(char *reader, char *tmp, char *result, int fd);
 char *check_filled_result(char *result, char *tmp, char *reader, int fd);
 char *clean_result(char * result, char *tmp, int counter);
+char *error_message(char *error);

@@ -1,0 +1,10 @@
+rm -f *.o
+gcc  -Wall -Wextra -Werror -D BUFFER_SIZE=4 -g3    -c -o get_next_line.o get_next_line.c
+gcc  -Wall -Wextra -Werror -D BUFFER_SIZE=4 -g3    -c -o get_next_line_utils.o get_next_line_utils.c
+ar -rcs get_next_line.a get_next_line.o get_next_line_utils.o 
+newline = <1234
+>
+
+<<<<1234
+>>>>
+

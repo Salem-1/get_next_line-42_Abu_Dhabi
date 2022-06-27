@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/27 08:55:02 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/27 17:56:23 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char *get_next_line(int fd)
 		return (result);
 	}
 	if (fd == -1)
-		return ("error: Nothing to read");
+		return (error_message("error: Nothing more to read"));
 	reader = malloc(BUFFER_SIZE);
 	if (!reader)
 		return (NULL);
@@ -62,4 +62,10 @@ char *clean_result(char * result, char *tmp, int counter)
 	//free(remaining);
 //	free(new_line);
 	return (result);
+}
+
+
+char *error_message(char *error)
+{
+	return (error);
 }

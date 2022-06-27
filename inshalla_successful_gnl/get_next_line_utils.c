@@ -6,11 +6,14 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/27 08:38:53 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/27 18:06:43 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+//the remaining part to check the filled result
+//do the testers inshalla
 
 char *ft_strjoin(char *tmp, char *reader, int counter)
 {
@@ -77,6 +80,7 @@ char *filler(char *reader, char *tmp, char *result, int fd)
 		reader[read_len] = '\0';
 		tmp = ft_strjoin(tmp, reader, counter);
 		counter += BUFFER_SIZE;
+		printf("tmp is %s\n", tmp);
 	}
 	result = clean_result(result, tmp, counter - BUFFER_SIZE);
 	free(tmp);
@@ -90,16 +94,16 @@ char *check_filled_result(char *result, char *tmp, char *reader, int fd)
 	
 	if (check_null_or_nl(result, BUFFER_SIZE) <= 0)
 	{
-		free(result);
-		return ("error: Nothing more to read");
+	//	free(result);
+		return (error_message("error: Nothing more to read"));
 	}
 	new_line_index = check_null_or_nl(result, BUFFER_SIZE);
 	if (result[new_line_index + 1] != '\0') 
 	{
 		
 		tmp = ft_strjoin(tmp, &result[new_line_index + 2], BUFFER_SIZE);
-		free(result);
+		//free(result);
 		return (filler( reader,tmp, result, fd));//the tmp should be in reader place but not to be filled 
 	}
-	return ("error : Nothing more to read");
+	return (error_message("error: Nothing more to read"));
 }
