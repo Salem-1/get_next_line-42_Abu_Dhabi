@@ -22,7 +22,9 @@ int main()
 	for(int i = 0; i < 2; ++i )
 	{
 		result = get_next_line(fd);
-		printf("\n<<<<%s>>>>\n\n",result);
+		printf("\n**************");
+		printf("\n<<<<%s>>>>\n",result);
+		printf("-------------------------------------\n");
 		free(result);
 	}
 	

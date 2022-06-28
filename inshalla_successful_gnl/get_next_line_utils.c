@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/27 18:06:43 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/28 19:11:28 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,26 @@
 //the remaining part to check the filled result
 //do the testers inshalla
 
-char *ft_strjoin(char *tmp, char *reader, int counter)
+char *ft_strjoin(char *tmp, char *reader, int counter, char flag)
 {
 	char	*new;
 	int		i;
 	int		j;
-
+	
+	//printf("reader = %s", reader);
 	new = malloc(counter);
 	if (!new)
 		return (NULL);
 	i = -1;
 	j = -1;
-	if (tmp == NULL)
+	if (tmp == NULL || flag == 'c')
 	{
 		while(++i < counter)
+		{
+		//	printf("reader[%d] = <%c>\n", i, reader[i]);
 			new[i] = reader[i];
-		free(tmp);
+		}
+		//free(tmp);
 		return (new);
 	}
 	while (++i < counter - BUFFER_SIZE)	
@@ -38,7 +42,7 @@ char *ft_strjoin(char *tmp, char *reader, int counter)
 	i--;
 	while (++i < counter)
 		new[i] = reader[++j];
-	free(tmp);
+	//free(tmp);
 	return (new);
 }
 
@@ -55,7 +59,9 @@ int check_null_or_nl(char *tmp, int counter)
 		if(tmp[i] == '\0')
 			return (0);
 		else if (tmp[i] == '\n')
+		{
 			return (i);
+		}
 	}
 	return (-1);
 }
@@ -74,31 +80,56 @@ char *filler(char *reader, char *tmp, char *result, int fd)
 		if (check_null_or_nl(tmp, BUFFER_SIZE) > -1)
 			reader[0] = '\0';
 	}
-	while (check_null_or_nl(reader, BUFFER_SIZE) == -1)
+	while (check_null_or_nl(reader, BUFFER_SIZE) == -1 || check_null_or_nl(tmp, counter) == -1)
 	{
 		read_len = read(fd, reader, BUFFER_SIZE);
 		reader[read_len] = '\0';
-		tmp = ft_strjoin(tmp, reader, counter);
+		tmp = ft_strjoin(tmp, reader, counter, 'j');
 		counter += BUFFER_SIZE;
-		printf("tmp is %s\n", tmp);
 	}
-	result = clean_result(result, tmp, counter - BUFFER_SIZE);
+	result = clean_result(result, tmp, reader,counter - BUFFER_SIZE);
+	remaining_fill( tmp, reader, counter);
 	free(tmp);
-	free(reader);
 	return (result);
 }
 
+void remaining_fill(char *tmp, char *reader ,int counter)
+{
+	int		new_line_index;
+	//char	*new_line;
+	char	*remaining;
+	int		i;
+
+	i = -1;
+	//new_line = NULL;
+	remaining = NULL;
+	new_line_index = check_null_or_nl(tmp, counter);
+	printf("newlineindex = %d\n", new_line_index);
+	if (new_line_index <= 0)
+	{
+		reader[0] = '\0';
+	
+	}
+	//printf("remaining in tmp %d(%s)",new_line_index, &tmp[new_line_index +1]);
+	remaining = ft_strjoin(reader, &tmp[new_line_index ], BUFFER_SIZE , 'j');
+	null_me(reader);
+	while (remaining[++i])
+		reader[i] = remaining[i];
+	//printf("reader is %s, remaining is %s\n", reader, remaining);
+	free(remaining);
+}
+
+/*
 char *check_filled_result(char *result, char *tmp, char *reader, int fd)
 {
 	int	new_line_index;
 	
-	if (check_null_or_nl(result, BUFFER_SIZE) <= 0)
+	if (check_null_or_nl(reader, BUFFER_SIZE) <= 0)
 	{
-	//	free(result);
 		return (error_message("error: Nothing more to read"));
 	}
-	new_line_index = check_null_or_nl(result, BUFFER_SIZE);
-	if (result[new_line_index + 1] != '\0') 
+	new_line_index = check_null_or_nl(reader, BUFFER_SIZE);
+	if (reader[new_line_index + 1] != '\0') 
 	{
 		
 		tmp = ft_strjoin(tmp, &result[new_line_index + 2], BUFFER_SIZE);
@@ -106,4 +137,13 @@ char *check_filled_result(char *result, char *tmp, char *reader, int fd)
 		return (filler( reader,tmp, result, fd));//the tmp should be in reader place but not to be filled 
 	}
 	return (error_message("error: Nothing more to read"));
+}*/
+
+void null_me(char *reader)
+{
+	int	i;
+	
+	i = -1;
+	while (reader[++i])
+		reader[i] = '\0';
 }
