@@ -19,13 +19,15 @@ int main()
 	}
 	
 	//result = get_next_line(fd);
-	for(int i = 0; i < 2; ++i )
+	for(int i = 0; i < 1000; ++i )
 	{
-		result = get_next_line(fd);
-		printf("\n**************");
-		printf("\n<<<<%s>>>>\n",result);
-		printf("-------------------------------------\n");
-		free(result);
+		//result = get_next_line(fd);
+		//printf("\n**************");
+		//printf("\n<<<<%s>>>>\n",result);
+		//printf("-------------------------------------\n");
+			//test without crutches
+			printf("%s",get_next_line(fd));
+		//free(result);
 	}
 	
 	//free(result);

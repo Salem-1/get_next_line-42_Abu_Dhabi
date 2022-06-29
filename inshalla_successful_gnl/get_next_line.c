@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/28 19:11:47 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/29 07:05:12 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,17 @@ char *get_next_line(int fd)
 		{
 			
 			tmp = ft_strjoin(reader, tmp, BUFFER_SIZE , 'j');
-			printf("\n2nd call tmp = %s\n", tmp);
+		//	printf("\n2nd call tmp = %s\n", tmp);
 			result = filler(reader, tmp, result, fd);
 		}
 		return (result);
 	}
 	if (fd == -1)
-		return (error_message("error: Nothing more to read"));
-	read_len = read(fd, reader, BUFFER_SIZE);
+		return (error_message("error: Nothing more to read\n"));
+	read_len = read(fd, reader, 4);
+	//printf("read_len = %d\n", read_len);
 	if (read_len == 0)
-		return (error_message("error: Nothing more to read"));
+		return (error_message("error: Nothing more to read\n"));
 	reader[read_len] = '\0';
 	tmp = ft_strjoin(tmp, reader, BUFFER_SIZE, 'j');
 	result = filler(reader, tmp, result, fd);
@@ -68,16 +69,22 @@ char *clean_result(char * result, char *tmp, char *reader ,int counter)
 	//remaining = NULL;
 	new_line_index = check_null_or_nl(tmp, counter);
 	//printf("thisis the enw %d**\n", new_line_index);
-	if (new_line_index <= 0)
+	if (new_line_index == 0)
 	{
+		//result = ft_strjoin(result, &tmp[new_line_index + 1], counter + 1, 'j');
 		result = ft_strjoin(result, tmp, counter + 1, 'j');
-		result[new_line_index+ 1]= '\0';
+		//result[new_line_index+ 1]= '\0';
 		return (result);
 	}
+	else if (new_line_index == -1)
+		return (error_message("error: Nothing more to read\n"));
 	new_line = ft_strjoin(new_line, tmp, new_line_index + 1 , 'j');
-	reader = ft_strjoin(reader, &tmp[new_line_index], BUFFER_SIZE , 'j');
-	new_line[new_line_index + 1] = '\0';
-	result = ft_strjoin(result, new_line, counter + 2, 'c');
+	
+	//the cod below doesn't make sense as I have remaining fill function already
+	reader = ft_strjoin(reader, &tmp[new_line_index - 1], BUFFER_SIZE , 'j');
+	new_line[new_line_index ] = '\0';
+	//I changed the length of the copied string from counter + 2 to the below
+	result = ft_strjoin(result, new_line, new_line_index + 1, 'c');
 	//free(tmp);
 	return (result);
 }

@@ -6,7 +6,7 @@
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/28 19:11:28 by ahsalem          ###   ########.fr       */
+/*   Updated: 2022/06/29 06:46:34 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int check_null_or_nl(char *tmp, int counter)
 			return (0);
 		else if (tmp[i] == '\n')
 		{
-			return (i);
+			return (++i);
 		}
 	}
 	return (-1);
@@ -78,7 +78,7 @@ char *filler(char *reader, char *tmp, char *result, int fd)
 	{	
 		counter += BUFFER_SIZE;
 		if (check_null_or_nl(tmp, BUFFER_SIZE) > -1)
-			reader[0] = '\0';
+			reader[0] = '\0'; //nulling the reader to break the loop below
 	}
 	while (check_null_or_nl(reader, BUFFER_SIZE) == -1 || check_null_or_nl(tmp, counter) == -1)
 	{
@@ -87,8 +87,12 @@ char *filler(char *reader, char *tmp, char *result, int fd)
 		tmp = ft_strjoin(tmp, reader, counter, 'j');
 		counter += BUFFER_SIZE;
 	}
+	//printf("tmp = <%s>", tmp);
 	result = clean_result(result, tmp, reader,counter - BUFFER_SIZE);
+	//I am not sure weather there is a need for the reamain_fill(), or I can 
+	//do the job inside clean_result()
 	remaining_fill( tmp, reader, counter);
+	//printf("reader last = <%s>", reader);
 	free(tmp);
 	return (result);
 }
@@ -96,27 +100,30 @@ char *filler(char *reader, char *tmp, char *result, int fd)
 void remaining_fill(char *tmp, char *reader ,int counter)
 {
 	int		new_line_index;
-	//char	*new_line;
 	char	*remaining;
 	int		i;
 
 	i = -1;
-	//new_line = NULL;
 	remaining = NULL;
 	new_line_index = check_null_or_nl(tmp, counter);
-	printf("newlineindex = %d\n", new_line_index);
+	// printf("newlineindex = %d\n", new_line_index);
 	if (new_line_index <= 0)
 	{
 		reader[0] = '\0';
-	
 	}
-	//printf("remaining in tmp %d(%s)",new_line_index, &tmp[new_line_index +1]);
-	remaining = ft_strjoin(reader, &tmp[new_line_index ], BUFFER_SIZE , 'j');
-	null_me(reader);
-	while (remaining[++i])
-		reader[i] = remaining[i];
-	//printf("reader is %s, remaining is %s\n", reader, remaining);
-	free(remaining);
+	else
+	{
+		//printf("remaining in tmp %d(%s)",new_line_index, &tmp[new_line_index +1]);
+		//I am using buffer size as if there is new line or null, the reader will stop
+		//there and will not read the rest
+		remaining = ft_strjoin(reader, &tmp[new_line_index ], BUFFER_SIZE , 'j');
+		null_me(reader);
+		while (remaining[++i])
+			reader[i] = remaining[i];
+		//printf("reader is %s, remaining is %s\n", reader, remaining);
+		//printf("remaning fill reader = <%s>", reader);
+		free(remaining);
+	}
 }
 
 /*
@@ -126,7 +133,7 @@ char *check_filled_result(char *result, char *tmp, char *reader, int fd)
 	
 	if (check_null_or_nl(reader, BUFFER_SIZE) <= 0)
 	{
-		return (error_message("error: Nothing more to read"));
+		return (error_message("error: Nothing more to read\n"));
 	}
 	new_line_index = check_null_or_nl(reader, BUFFER_SIZE);
 	if (reader[new_line_index + 1] != '\0') 
@@ -136,7 +143,7 @@ char *check_filled_result(char *result, char *tmp, char *reader, int fd)
 		//free(result);
 		return (filler( reader,tmp, result, fd));//the tmp should be in reader place but not to be filled 
 	}
-	return (error_message("error: Nothing more to read"));
+	return (error_message("error: Nothing more to read\n"));
 }*/
 
 void null_me(char *reader)
