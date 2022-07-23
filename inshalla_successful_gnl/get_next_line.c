@@ -28,7 +28,6 @@ char *get_next_line(int fd)
 	
 	result = NULL;
 	// printf("begining reader = <%s>\n", reader);
-	
 	if (reader[0])
 	{
 		result = ft_mystrcpy(result, reader);
