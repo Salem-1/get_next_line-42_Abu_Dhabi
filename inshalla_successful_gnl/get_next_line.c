@@ -1,96 +1,137 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/18 12:13:00 by ahsalem           #+#    #+#             */
-/*   Updated: 2022/06/29 07:05:12 by ahsalem          ###   ########.fr       */
+/*   Created: 2022/06/18 18:11:35 by ahsalem           #+#    #+#             */
+/*   Updated: 2022/06/29 06:46:34 by ahsalem          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-//first line call work excellent, fix the second line call
-//by tracing the remaining reader and the operations that
-//came after inshall
-//7asbi Allah la 2elah 2la hoa 3alieh tawklt wa hoa rab el3arsh el3azeem
 
-char *get_next_line(int fd)
+char * ft_mystrcpy(char *result, char *reader)
 {
-	static char	reader[BUFFER_SIZE];
-	char		*tmp;
-	char		*result;
-	int			read_len;
+	int	i;
+
+	i = -1;
+	result = malloc(ft_strlen(reader) + 2);
+	if (!result)
+		return (NULL);
+	while(reader[++i])
+		result[i] = reader[i];
+	result[i] = '\0';
+	result[i + 1] = '\0';
+	return (result);
+}
+
+char *ft_strjoin(char *tmp, char *reader, int counter)
+{
+	char	*new;
+	int		i;
+	int		j;
+
+	new = NULL;
+	new = malloc(sizeof(char *)  * counter + 2);
+	if (!new)
+		return (NULL);
+	i = -1;
+	j = -1;
+	while (++i < counter - ft_strlen(reader))	
+		new[i] = tmp[i];
+	i--;
 	
-	result = NULL;
+	while (++i < counter)
+	{
+		new[i] = reader[++j];
+		//printf("new[%d] <%c> = reader[%d] <%c>\n",i,  new[i], j, reader[j]);
+	}
+	//printf("new =  %s, and i = %d counter = %d\n", new, i, counter);
+	
+	new[i] = '\0';
+	new[i + 1] = '\0';
+	free(tmp);
+	return (new);
+}
+
+
+int check_null_or_nl(char *tmp, int counter)
+{	
+	int	i;
+	
+	if(tmp == NULL)
+		return (1);
+	i = -1;
+	while (++i < counter)
+	{
+		if (tmp[i] == '\n' || tmp[i] == '\0')
+			return (++i);
+	}
+	return (-1);
+}
+
+
+char *filler(char *reader, char *result, int fd)
+{
+	int		len_reader;
+	int		read_len;
+	int		counter;
+	char	*tmp;
+
+
+	len_reader = 0;
 	tmp = NULL;
-	if (reader[0])
-	{
-	//	printf("reader after call = %s", reader);
-		
-		//start coding from here inshalla fix this part..
-		tmp = ft_strjoin(tmp, reader, BUFFER_SIZE, 'c');
-		null_me(reader);
-		read_len = read(fd, reader, BUFFER_SIZE);
-		//printf("\n2ndcall reader = %s", reader);
-		if (read_len == 0)
-			result = clean_result(result, tmp, reader ,BUFFER_SIZE);
-		else
-		{
-			
-			tmp = ft_strjoin(reader, tmp, BUFFER_SIZE , 'j');
-		//	printf("\n2nd call tmp = %s\n", tmp);
-			result = filler(reader, tmp, result, fd);
-		}
-		return (result);
-	}
-	if (fd == -1)
-		return (error_message("error: Nothing more to read\n"));
-	read_len = read(fd, reader, 4);
-	//printf("read_len = %d\n", read_len);
-	if (read_len == 0)
-		return (error_message("error: Nothing more to read\n"));
-	reader[read_len] = '\0';
-	tmp = ft_strjoin(tmp, reader, BUFFER_SIZE, 'j');
-	result = filler(reader, tmp, result, fd);
-	return (result);
-}
-
-char *clean_result(char * result, char *tmp, char *reader ,int counter)
-{
-	int		new_line_index;
-	char	*new_line;
-	//char	*remaining;
-	//int		i;
-
-	//i = -1;
-	new_line = NULL;
-	//remaining = NULL;
-	new_line_index = check_null_or_nl(tmp, counter);
-	//printf("thisis the enw %d**\n", new_line_index);
-	if (new_line_index == 0)
-	{
-		//result = ft_strjoin(result, &tmp[new_line_index + 1], counter + 1, 'j');
-		result = ft_strjoin(result, tmp, counter + 1, 'j');
-		//result[new_line_index+ 1]= '\0';
-		return (result);
-	}
-	else if (new_line_index == -1)
-		return (error_message("error: Nothing more to read\n"));
-	new_line = ft_strjoin(new_line, tmp, new_line_index + 1 , 'j');
+	counter = ft_strlen(result);
 	
-	//the cod below doesn't make sense as I have remaining fill function already
-	reader = ft_strjoin(reader, &tmp[new_line_index - 1], BUFFER_SIZE , 'j');
-	new_line[new_line_index ] = '\0';
-	//I changed the length of the copied string from counter + 2 to the below
-	result = ft_strjoin(result, new_line, new_line_index + 1, 'c');
-	//free(tmp);
+	read_len = 0;
+
+	//printf("filler tester -----------------------\n");
+	//  printf("entering filler, result = %s, reader = %s, counter = %d\n", result, reader, counter);
+
+	while (check_null_or_nl(reader, BUFFER_SIZE) == -1)
+	{
+		read_len = read(fd, reader, BUFFER_SIZE);
+		reader[read_len] = '\0';
+		counter += read_len;
+		if (read_len == 0)
+			// printf("counter = %d, len(str) = %d\n", counter, ft_strlen(result));
+		result = ft_strjoin(result, reader, counter);
+	}
+	//assumption : countr = ft_strlen(result)
+	// printf("result_len = %d , read_len = %d, countre = %d, last_Char = <%c>\n", ft_strlen(result), read_len, counter, result[check_null_or_nl(result, counter)]);
+	result[check_null_or_nl(result, counter)] = '\0';
+	//printf("result before returning filler = <%s>\n", result);
+	
+	read_len = check_null_or_nl(reader, ft_strlen(reader)) - 1;
+	counter = -1;
+	tmp = ft_mystrcpy(tmp, reader);
+	//printf("reader copy = %s, reader = %s", tmp, reader);
+	len_reader = ft_strlen(reader);
+	//printf("read_len = %d, readler_len = %d\n", read_len, ft_strlen(reader));
+	null_me(reader);
+	//printf("read_len = %d, readler_len = %d\n", read_len, ft_strlen(reader))
+	//copying the reader to itself from the null or \n to the end
+	// printf("len_reader = %d, len_temp = %d\n", len_reader, ft_strlen(tmp));
+	while (++read_len  < len_reader  )
+	{
+		reader[++counter] = tmp[read_len];
+//		printf("reader[%d] = <%c>\n", counter, reader[counter]);
+	}
+	//printf("searching for null reader[end] = <%c>\n", reader[counter]);
+//	printf("remaining reader = <%s>\n", reader);
+	
+	free(tmp);	
 	return (result);
 }
 
-
-char *error_message(char *error)
+void null_me(char *reader)
 {
-	return (error);
+	int	i;
+	
+	i = -1;
+	while (reader[++i])
+		reader[i] = '\0';
 }
+
