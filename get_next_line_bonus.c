@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahsalem <ahsalem@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -14,29 +14,29 @@
 
 char	*get_next_line(int fd)
 {
-	static char	reader[BUFFER_SIZE + 2];
+	static char	reader[1024][BUFFER_SIZE + 2];
 	char		*result;
 	int			read_len;
 
 	if (fd < 0 || fd > 10240)
 		return (NULL);
 	result = NULL;
-	if (reader[0])
+	if (reader[fd][0])
 	{
-		result = ft_mystrcpy(result, reader);
+		result = ft_mystrcpy(result, reader[fd]);
 		if (result[isnl(result, ln(result) + 1) - 1] == '\0')
-			result = f(isnl(result, ln(result) + 1), fd, reader, result);
-		result = filler(reader, result, fd);
+			result = f(isnl(result, ln(result) + 1), fd, reader[fd], result);
+		result = filler(reader[fd], result, fd);
 		return (result);
 	}
 	else
 	{
-		read_len = read(fd, reader, BUFFER_SIZE);
+		read_len = read(fd, reader[fd], BUFFER_SIZE);
 		if (read_len == 0 || read_len == -1)
 			return (NULL);
-		reader[read_len] = '\0';
-		result = ft_mystrcpy(result, reader);
-		result = filler(reader, result, fd);
+		reader[fd][read_len] = '\0';
+		result = ft_mystrcpy(result, reader[fd]);
+		result = filler(reader[fd], result, fd);
 		return (result);
 	}
 }

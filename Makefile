@@ -28,4 +28,3 @@ tclean:
 	@rm readme.txt a.out
 
 e:	re test tclean
-	
